@@ -57,18 +57,18 @@ public final class Reminder {
             lastDay = dayOfMonth;
         }
 
-            if (second != lastSecond) {
-                lastSecond = second;
-                Optional.ofNullable(RemindConfig.getActivities(hour, minute, second, dayOfWeek, dayOfMonth, month)).ifPresent(lists -> {
-                    for (List<String> activities : lists) {
-                        for (String activity : activities) {
-                            Component activityComponent = ACTIVITIES.computeIfAbsent(activity, Component::translatable);
-                            for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
-                                player.displayClientMessage(activityComponent, false);
-                            }
+        if (second != lastSecond) {
+            lastSecond = second;
+            Optional.ofNullable(RemindConfig.getActivities(hour, minute, second, dayOfWeek, dayOfMonth, month)).ifPresent(lists -> {
+                for (List<String> activities : lists) {
+                    for (String activity : activities) {
+                        Component activityComponent = ACTIVITIES.computeIfAbsent(activity, Component::translatable);
+                        for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
+                            player.displayClientMessage(activityComponent, false);
                         }
                     }
-                });
-            }
+                }
+            });
+        }
     }
 }
