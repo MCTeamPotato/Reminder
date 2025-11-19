@@ -148,26 +148,27 @@ String currentChangeLog = file("CHANGELOG.md").getText("UTF-8")
 String[] javaVersions = isNeo ? ["Java 21", "Java 22"] : (isOld ? ["Java 8", "Java 17", "Java 21", "Java 22"] : ["Java 17", "Java 21", "Java 22"])
 
 tasks.register("publishCurseForge", TaskPublishCurseForge) {
-    if (cf_project_id == "") throw new UnsupportedOperationException("Didn't define CurseForge project ID")
-    apiToken = System.getenv("CURSEFORGE_TOKEN")
-    disableVersionDetection()
+    if (cf_project_id != "") {
+        apiToken = System.getenv("CURSEFORGE_TOKEN")
+        disableVersionDetection()
 
-    UploadArtifact mainFile = upload(cf_project_id, remapJar)
-    mainFile.displayName = "${archives_name}-${version}"
-    mainFile.releaseType = "release"
-    mainFile.changelog = currentChangeLog
-    mainFile.changelogType = "markdown"
-    mainFile.addModLoader(isNeo ? "NeoForge" : "Forge")
-    mainFile.addJavaVersion(javaVersions)
-    mainFile.addGameVersion(minecraft_version)
-    if (claimIntegration) {
-        mainFile.addOptional("ftb-chunks-forge")
-        if (!isOld) mainFile.addOptional("open-parties-and-claims")
+        UploadArtifact mainFile = upload(cf_project_id, remapJar)
+        mainFile.displayName = "${archives_name}-${version}"
+        mainFile.releaseType = "release"
+        mainFile.changelog = currentChangeLog
+        mainFile.changelogType = "markdown"
+        mainFile.addModLoader(isNeo ? "NeoForge" : "Forge")
+        mainFile.addJavaVersion(javaVersions)
+        mainFile.addGameVersion(minecraft_version)
+        if (claimIntegration) {
+            mainFile.addOptional("ftb-chunks-forge")
+            if (!isOld) mainFile.addOptional("open-parties-and-claims")
+        }
+        if (embeddiumIntegration) mainFile.addOptional("embeddium")
+        if (useDuplicationLess) mainFile.addRequirement("duplicationless")
+
+        UploadArtifact sourcesFile = mainFile.withAdditionalFile(sourcesJar)
+        sourcesFile.changelog = currentChangeLog
+        sourcesFile.changelogType = "markdown"
     }
-    if (embeddiumIntegration) mainFile.addOptional("embeddium")
-    if (useDuplicationLess) mainFile.addRequirement("duplicationless")
-
-    UploadArtifact sourcesFile = mainFile.withAdditionalFile(sourcesJar)
-    sourcesFile.changelog = currentChangeLog
-    sourcesFile.changelogType = "markdown"
 }
