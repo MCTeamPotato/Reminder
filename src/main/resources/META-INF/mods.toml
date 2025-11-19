@@ -1,0 +1,13 @@
+modLoader = "javafml"
+loaderVersion = "[36,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "reminder"
+version = "${version}"
+displayName = "Reminder"
+authors = "Kall"
+description = '''
+'''
+#logoFile = ""
