@@ -9,7 +9,6 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -24,10 +23,10 @@ public class RemindConfig {
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        builder.push("Reminder");
+        builder.push("Reminder").comment("Do note that the activityLangKey is optional.", "You can also keep it unlocalized and write hard-coded texts.");
         Predicate<Object> alwaysTrue = Predicates.alwaysTrue();
         DAILY_ACTIVITIES = builder.comment("Daily activities in format HH:MM:SS->activityLangKey", "Example: 12:00:00->info.time.to.lunch").defineListAllowEmpty("DailyActivities", Lists.newArrayList(), alwaysTrue);
-        WEEKLY_ACTIVITIES = builder.comment("Weekly activities in format WEEKDAY:HH:MM:SS->activityLangKey", "Example: MONDAY:08:00:00->info.time.to.getup.for.class", "Valid WEEKDAY: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY").defineListAllowEmpty("WeeklyActivities", Lists.newArrayList(), alwaysTrue);
+        WEEKLY_ACTIVITIES = builder.comment("Weekly activities in format WEEKDAY:HH:MM:SS->activityLangKey", "Example: 1:08:00:00->info.time.to.getup.for.class").defineListAllowEmpty("WeeklyActivities", Lists.newArrayList(), alwaysTrue);
         MONTHLY_ACTIVITIES = builder.comment("Monthly activities in format DAY:HH:MM:SS->activityLangKey", "Example: 30:12:00:00->info.last.day.of.the.month").defineListAllowEmpty("MonthlyActivities", Lists.newArrayList(), alwaysTrue);
         YEARLY_ACTIVITIES = builder.comment("Yearly activities in format MONTH:DAY:HH:MM:SS->activityLangKey", "Example: 12:25:08:00:00->info.christmas").defineListAllowEmpty("YearlyActivities", Lists.newArrayList(), alwaysTrue);
         builder.pop();
@@ -59,28 +58,28 @@ public class RemindConfig {
     public static void validateConfig() {
         DAILY.clear();
         for (String entry : DAILY_ACTIVITIES.get()) {
-            String[] parts = entry.split("->");
+            String[] parts = entry.split("->", 2);
             String[] time = parts[0].split(":");
             DAILY.computeIfAbsent(new Day(Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2])), key -> new ObjectArrayList<>()).add(parts[1]);
         }
 
         WEEKLY.clear();
         for (String entry : WEEKLY_ACTIVITIES.get()) {
-            String[] parts = entry.split("->");
+            String[] parts = entry.split("->", 2);
             String[] time = parts[0].split(":");
-            WEEKLY.computeIfAbsent(new Week(DayOfWeek.valueOf(time[0]).getValue(), Integer.parseInt(time[1]), Integer.parseInt(time[2]), Integer.parseInt(time[3])), key -> new ObjectArrayList<>()).add(parts[1]);
+            WEEKLY.computeIfAbsent(new Week(Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2]), Integer.parseInt(time[3])), key -> new ObjectArrayList<>()).add(parts[1]);
         }
 
         MONTHLY.clear();
         for (String entry : MONTHLY_ACTIVITIES.get()) {
-            String[] parts = entry.split("->");
+            String[] parts = entry.split("->", 2);
             String[] time = parts[0].split(":");
             MONTHLY.computeIfAbsent(new Month(Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2]), Integer.parseInt(time[3])), key -> new ObjectArrayList<>()).add(parts[1]);
         }
 
         YEARLY.clear();
         for (String entry : YEARLY_ACTIVITIES.get()) {
-            String[] parts = entry.split("->");
+            String[] parts = entry.split("->", 2);
             String[] time = parts[0].split(":");
             YEARLY.computeIfAbsent(new Year(Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2]), Integer.parseInt(time[3]), Integer.parseInt(time[4])), key -> new ObjectArrayList<>()).add(parts[1]);
         }
