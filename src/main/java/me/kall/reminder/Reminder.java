@@ -1,5 +1,6 @@
 package me.kall.reminder;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Mod(Reminder.MOD_ID)
@@ -21,6 +23,8 @@ public final class Reminder {
 
     private static int lastDay = -1;
     private static int lastSecond = -1;
+
+    private static final Map<String, Component> ACTIVITIES = new Object2ObjectOpenHashMap<>();
 
     public Reminder(@NotNull FMLJavaModLoadingContext context) {
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
@@ -60,8 +64,9 @@ public final class Reminder {
                 Optional.ofNullable(RemindConfig.getActivities(hour, minute, second, dayOfWeek, dayOfMonth, month)).ifPresent(lists -> {
                     for (List<String> activities : lists) {
                         for (String activity : activities) {
+                            Component activityComponent = ACTIVITIES.computeIfAbsent(activity, Component::translatable);
                             for (ServerPlayer player : event.getServer().getPlayerList().getPlayers()) {
-                                player.displayClientMessage(Component.translatable(activity), false);
+                                player.displayClientMessage(activityComponent, false);
                             }
                         }
                     }
