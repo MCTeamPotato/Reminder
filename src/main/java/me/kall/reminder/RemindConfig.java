@@ -4,8 +4,8 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,21 +15,21 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public class RemindConfig {
-    public static final ForgeConfigSpec INSTANCE;
+    public static final ModConfigSpec INSTANCE;
 
-    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> DAILY_ACTIVITIES;
-    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> WEEKLY_ACTIVITIES;
-    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> MONTHLY_ACTIVITIES;
-    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> YEARLY_ACTIVITIES;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> DAILY_ACTIVITIES;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> WEEKLY_ACTIVITIES;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> MONTHLY_ACTIVITIES;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> YEARLY_ACTIVITIES;
 
     static {
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         builder.push("Reminder");
         Predicate<Object> alwaysTrue = Predicates.alwaysTrue();
-        DAILY_ACTIVITIES = builder.comment("Daily activities in format HH:MM:SS->activityLangKey", "Example: 12:00:00->info.time.to.lunch").defineListAllowEmpty("DailyActivities", Lists.newArrayList(), alwaysTrue);
-        WEEKLY_ACTIVITIES = builder.comment("Weekly activities in format WEEKDAY:HH:MM:SS->activityLangKey", "Example: MONDAY:08:00:00->info.time.to.getup.for.class", "Valid WEEKDAY: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY").defineListAllowEmpty("WeeklyActivities", Lists.newArrayList(), alwaysTrue);
-        MONTHLY_ACTIVITIES = builder.comment("Monthly activities in format DAY:HH:MM:SS->activityLangKey", "Example: 30:12:00:00->info.last.day.of.the.month").defineListAllowEmpty("MonthlyActivities", Lists.newArrayList(), alwaysTrue);
-        YEARLY_ACTIVITIES = builder.comment("Yearly activities in format MONTH:DAY:HH:MM:SS->activityLangKey", "Example: 12:25:08:00:00->info.christmas").defineListAllowEmpty("YearlyActivities", Lists.newArrayList(), alwaysTrue);
+        DAILY_ACTIVITIES = builder.comment("Daily activities in format HH:MM:SS->activityLangKey", "Example: 12:00:00->info.time.to.lunch").defineListAllowEmpty("DailyActivities", Lists.newArrayList(), () -> "HH:MM:SS->activityLangKey", alwaysTrue);
+        WEEKLY_ACTIVITIES = builder.comment("Weekly activities in format WEEKDAY:HH:MM:SS->activityLangKey", "Example: MONDAY:08:00:00->info.time.to.getup.for.class", "Valid WEEKDAY: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY").defineListAllowEmpty("WeeklyActivities", Lists.newArrayList(), () -> "WEEKDAY:HH:MM:SS->activityLangKey", alwaysTrue);
+        MONTHLY_ACTIVITIES = builder.comment("Monthly activities in format DAY:HH:MM:SS->activityLangKey", "Example: 30:12:00:00->info.last.day.of.the.month").defineListAllowEmpty("MonthlyActivities", Lists.newArrayList(), () -> "DAY:HH:MM:SS->activityLangKey", alwaysTrue);
+        YEARLY_ACTIVITIES = builder.comment("Yearly activities in format MONTH:DAY:HH:MM:SS->activityLangKey", "Example: 12:25:08:00:00->info.christmas").defineListAllowEmpty("YearlyActivities", Lists.newArrayList(), () -> "MONTH:DAY:HH:MM:SS->activityLangKey", alwaysTrue);
         builder.pop();
         INSTANCE = builder.build();
     }
