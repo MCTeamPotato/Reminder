@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,8 +84,6 @@ public class RemindConfig {
             String[] time = parts[0].split(":");
             YEARLY.computeIfAbsent(new Year(Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2]), Integer.parseInt(time[3]), Integer.parseInt(time[4])), key -> new ObjectArrayList<>()).add(parts[1]);
         }
-
-        MinecraftForge.EVENT_BUS.post(new ActivityRegistryEvent());
     }
 
     public static void reload(ModConfigEvent.@NotNull Reloading event) {
